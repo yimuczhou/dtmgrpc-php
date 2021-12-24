@@ -71,6 +71,7 @@ class Barrier
             $logger->info(sprintf("originAffected: %d currentAffected: %d", $originAffected, $currAffected));
             // $originAffected > 0 这个是空补偿; $currAffected == 0 这个是重复请求或悬挂
             if (in_array($op, [Constants::ACTION_TYPE_CANCEL, Constants::ACTION_TYPE_COMPENSATE]) && $originAffected > 0 || $currAffected == 0) {
+                $db->commit();
                 return;
             }
             $callback($this->config->getDb());
