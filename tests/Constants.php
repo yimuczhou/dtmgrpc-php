@@ -9,6 +9,6 @@ namespace DtmGrpc\Tests;
  */
 class Constants
 {
-    const DTM_GRPC_SERVER = 'localhost:58080';
+    const DTM_GRPC_SERVER = 'localhost:36790';
     const DTM_BUS_GRPC_SERVER = 'localhost:58081';
 }

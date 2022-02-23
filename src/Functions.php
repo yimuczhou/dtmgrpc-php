@@ -6,8 +6,8 @@ namespace DtmGrpc;
 use DtmGrpc\Config\MsgConfig;
 use DtmGrpc\Config\SagaConfig;
 use DtmGrpc\Config\TccConfig;
+use DtmGrpc\Exception\DtmFailureException;
 use DtmGrpc\Exception\DtmGrpcConnectionException;
-use DtmGrpc\Exception\DtmGrpcRuntimeException;
 use DtmGrpc\Exception\DtmGrpcUnknownException;
 use DtmGrpc\GPB\DtmGimp\DtmClient;
 use DtmGrpc\Client;
@@ -57,7 +57,7 @@ if (!function_exists('checkStatus')) {
         }
         //服务器端执行失败
         if ($status->code == 10 || stripos($status->details, 'FAILURE') !== false) {
-            throw new DtmGrpcRuntimeException('gRpc server fails to execute, err:' . $status->details);
+            throw new DtmFailureException('gRpc server fails to execute, err:' . $status->details);
         }
         //其他异常错误
         if ($status->code != 0) {

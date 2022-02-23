@@ -50,6 +50,7 @@ class Barrier
 
     /**
      * @param callable $callback
+     * @throws \Throwable
      */
     public function call(callable $callback) {
         $this->setBarrierId($this->getBarrierId() + 1);
@@ -59,7 +60,8 @@ class Barrier
         $logger = $config->getLogger();
         $op     = $config->getOp();
         $db     = $config->getDb();
-        $db->beginTransaction();
+        // 外层开启事务
+        //$db->beginTransaction();
         try {
             $originBranch = [
                                 Constants::ACTION_TYPE_CANCEL     => Constants::ACTION_TYPE_TRY,
@@ -74,10 +76,11 @@ class Barrier
                 $db->commit();
                 return;
             }
-            $callback($this->config->getDb());
+            $callback($db);
             $db->commit();
         } catch (\Throwable $e) {
             $db->rollBack();
+            throw $e;
         }
 
     }
@@ -98,5 +101,13 @@ class Barrier
         $statement = $this->getConfig()->getDb()->prepare("insert ignore into dtm_barrier.barrier(trans_type, gid, branch_id, op, barrier_id, reason) values (?,?,?,?,?,?)");
         $statement->execute([$transType, $gid, $branchId, $op, $barrierId, $reason]);
         return $statement->rowCount();
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function callWithDb(\PDO $db, callable $callback) {
+        $db->beginTransaction();
+        $this->call($callback);
     }
 }

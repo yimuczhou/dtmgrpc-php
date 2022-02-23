@@ -24,6 +24,12 @@ class MsgConfig
      */
     protected $dtmClient;
 
+    /**
+     * @var
+     */
+    protected $grpcClient;
+
+
     use DefaultConfig;
 
     /**
@@ -71,5 +77,20 @@ class MsgConfig
         $this->dtmClient = $dtmClient;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getGrpcClient() {
+        if (empty($this->grpcClient)) {
+            return $this->getDefGrpcClient();
+        }
+        return $this->grpcClient;
+    }
 
+    /**
+     * @param callable $client
+     */
+    public function setGrpcClient(callable $client): void {
+        $this->grpcClient = $client;
+    }
 }
